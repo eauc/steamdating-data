@@ -5,7 +5,7 @@ const app = express();
 
 consign({ verbose: process.env.NODE_ENV !== 'production' })
   .include('libs/config.js')
-  // .then('db.js')
+  .then('db.js')
   // .then('auth.js')
   .then('libs/middlewares.js')
   .then('routes')
