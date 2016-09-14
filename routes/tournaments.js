@@ -3,6 +3,8 @@
 // const guard = expressJWTPermissions();
 
 module.exports = app => {
+  const auth = app.get('auth');
+  const perms = app.get('perms');
   const Tournaments = app.db.models.Tournaments;
   app.route('/tournaments')
     .get((req, res) => {
