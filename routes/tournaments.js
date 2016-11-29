@@ -7,7 +7,7 @@ module.exports = app => {
   app.route('/tournaments')
     .get((_req_, res) => {
       Tournaments.findAll({
-        attributes: ['id', 'name', 'date']
+        attributes: ['id', 'name', 'date', 'updated_at']
       }).then(result => {
         const data = R.map(addResourceLink, result);
         res.json({ link: '/tournaments',
@@ -26,7 +26,7 @@ module.exports = app => {
         where: {
           user: req.user.email
         },
-        attributes: ['id', 'name', 'date']
+        attributes: ['id', 'name', 'date', 'updated_at']
       }).then(result => {
         const data = R.map(addResourceLink, result);
         res.json({ link: '/tournaments/mine',
@@ -37,10 +37,12 @@ module.exports = app => {
     })
     .post((req, res) => {
       req.body.user = req.user.email;
+      console.log('create', req.body);
       Tournaments.create(req.body)
         .then(result => {
-          const data = addResourceLink(result);
-          res.json(data);
+          res.json({ link: `/tournaments/${result.id}`,
+                     data: R.omit(['data'], result)
+                   });
         })
         .catch(error => {
           res.status(412).json({msg: error.message});
@@ -55,8 +57,9 @@ module.exports = app => {
         }
       }).then(result => {
         if (result) {
-          const data = addResourceLink(result);
-          res.json(data);
+          res.json({ link: `/tournaments/${result.id}`,
+                     data: result
+                   });
         } else {
           res.sendStatus(404);
         }
@@ -68,6 +71,8 @@ module.exports = app => {
       auth,
       perms.check('user:tournament_organizer'),
       (req, res) => {
+        console.log(req);
+        console.log(req.body);
         Tournaments.update(req.body, {
           where: {
             id: req.params.id,
@@ -78,9 +83,9 @@ module.exports = app => {
             id: req.params.id
           }
         })).then(result => {
-          const data = addResourceLink(result);
-          console.log(data, result);
-          res.json(data);
+          res.json({ link: `/tournaments/${result.id}`,
+                     data: R.omit(['data'], result)
+                   });
         }).catch(error => {
           res.status(412).json({msg: error.message});
         });
