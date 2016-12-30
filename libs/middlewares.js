@@ -14,7 +14,10 @@ module.exports = app => {
   app.use(compression());
   app.use(bodyParser.json());
   app.use((req, _res_, next) => {
-    delete req.body.id;
+    delete req.body._id;
+    delete req.body.__v;
+    delete req.body._createdAt;
+    delete req.body._updatedAt;
     next();
   });
 };
