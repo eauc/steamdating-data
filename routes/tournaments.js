@@ -119,6 +119,20 @@ module.exports = app => {
             res.status(400).json(error);
           });
       });
+
+  if(process.env.NODE_ENV !== "production") {
+    app.route('/test/tournaments/all')
+      .delete((req, res) => {
+        Tournament
+          .remove()
+          .then((result) => {
+            res.status(200).json(result);
+          })
+          .catch(error => {
+            res.status(400).json(error);
+          });
+      });
+  }
 };
 
 function addResourceLink(tournament) {

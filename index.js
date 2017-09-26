@@ -13,5 +13,4 @@ consign({ verbose: process.env.NODE_ENV !== 'production' })
   .then('libs/boot.js')
   .into(app);
 
-module.exports = app
-;
+module.exports = app;
