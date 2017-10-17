@@ -1,3 +1,4 @@
+import moment from 'moment';
 import R from 'ramda';
 import webPush from 'web-push';
 
@@ -112,7 +113,10 @@ module.exports = app => {
 					})
 					.then(({name, _id: id}) => {
 						return sendNotificationsForTournament({name, id});
-					});
+					})
+          .then(() => {
+            purgeOldNotifications();
+          });
 			}
 		)
 		.delete(
@@ -181,7 +185,10 @@ module.exports = app => {
 
 	function sendNotificationsForTournament({name, id}) {
 		return Notification
-			.find({tournament: id})
+			.find({
+        tournament: id,
+        updatedAt: {$gt: moment().subtract(1, "day").toDate()},
+      })
 			.then((notifications) => {
 				console.log(`Sending ${R.length(notifications)} notifications.`, {name, id});
 				return Promise.all(R.map((notification) => {
@@ -198,6 +205,16 @@ module.exports = app => {
 				console.error("Send notifications error", error);
 			});
 	}
+
+  function purgeOldNotifications() {
+    Notification
+      .remove({updatedAt: {$lt: moment().subtract(1, "day").toDate()}})
+      .then(({result}) => {
+        console.log("Purge old notifications ok", {result});
+      }, (error) => {
+        console.log("Purge old notifications error", {error});
+      });
+  }
 };
 
 function addResourceLink(tournament) {
