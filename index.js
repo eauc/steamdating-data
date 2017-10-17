@@ -9,6 +9,7 @@ consign({ verbose: process.env.NODE_ENV !== 'production' })
   .then('models')
   .then('auth.js')
   .then('libs/middlewares.js')
+  .then('libs/webPush.js')
   .then('routes')
   .then('libs/boot.js')
   .into(app);

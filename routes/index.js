@@ -6,7 +6,10 @@ module.exports = app => {
       tournaments: {
         link: '/tournaments',
         mine: '/tournaments/mine'
-      }
+      },
+      notifications: {
+        save: '/tournaments/:tournamentId/notifications',
+      },
     });
   });
 };
