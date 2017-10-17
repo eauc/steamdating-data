@@ -188,10 +188,13 @@ module.exports = app => {
 					return webPush.sendNotification(
 						R.pick(["endpoint", "keys"], notification),
 						JSON.stringify({name, id})
-					);
+					).catch((error) => {
+				    console.error("Send notification error", error);
+            return Notification
+              .remove({_id: notification._id});
+			    });
 				}, notifications));
-			})
-			.catch((error) => {
+			}).catch((error) => {
 				console.error("Send notifications error", error);
 			});
 	}
